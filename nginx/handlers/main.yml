@@ -1,0 +1,9 @@
+---
+#
+# File: nginx/handlers/main.yml
+#
+- name: start nginx
+  service: name=nginx pattern=/etc/init.d/nginx state=started enabled=yes
+
+- name: restart nginx
+  service: name=nginx pattern=/etc/init.d/nginx state=restarted enabled=yes
