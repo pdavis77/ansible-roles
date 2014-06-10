@@ -2,10 +2,8 @@
 # NTP Config
 # file: tasks/ntp-RedHat.yml
 
-- name: Ensure ntp is installed
-  apt: 
-  	name: ntp
-  	state: present
+#- name: Ensure ntp is installed
+- apt: name=ntp state=present
   tags: ntp
 
 - name: Ensure ntp is configured

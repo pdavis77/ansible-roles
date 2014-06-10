@@ -3,18 +3,15 @@
 # File: common/tasks/main.yml
 #
 
-- name: OS specific variables
-  include_vars: "{{ ansible_os_family }}.yml"
+#- name: OS specific variables
+#  include_vars: "{{ ansible_os_family }}.yml"
 
 # tools installation
-- name: Additional Tools
-- include: "tools-{{ ansible_os_family }}.yml"
+- include: "tools-{{ os_family }}.yml"
 
 # ntp config
-- name: NTP Config
-- include: "ntp-{{ ansible_os_family }}.yml"
+- include: "ntp-{{ os_family }}.yml"
 
 # do the oracle_jdk work in a separate file
-- name: Oracle JDK
-- include: "oracle_jdk-{{ ansible_os_family }}.yml"
+- include: "oracle_jdk-{{ os_family }}.yml"
 

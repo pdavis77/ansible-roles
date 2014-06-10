@@ -4,8 +4,7 @@
 #
 
 # Nginx config
-- name: Nginx
-- include: "nginx-{{ ansible_os_family }}.yml"
+- include: "nginx-{{ os_family }}.yml"
 
 
 - name: Upload nginx.conf
