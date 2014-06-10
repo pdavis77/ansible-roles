@@ -1,0 +1,10 @@
+---
+# Common handlers
+# File: common/handlers/main.yml
+#
+
+- name: restart ntpd
+  service: name=ntpd state=restarted
+
+- name: restart nginx
+  service: name=nginx state=restarted

@@ -1,0 +1,19 @@
+---
+# NTP Config
+# file: tasks/ntp-RedHat.yml
+
+- name: Ensure ntp is installed
+  yum: 
+    name: ntp
+    state: latest
+  tags: ntp
+
+- name: Ensure ntp is configured
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  notify:
+    - restart ntpd
+  tags: ntp
+
+- name: Ensure ntpd is running and enabled
+  service: name=ntpd state=running enabled=yes
+  tags: ntp

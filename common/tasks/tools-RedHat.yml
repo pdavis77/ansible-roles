@@ -1,0 +1,27 @@
+---
+# Tools
+# file: tasks/tools-RedHat.yml
+
+- name: Ensure the latest htop is installed
+  yum: 
+    name: htop
+    state: latest
+  tags: tools
+
+- name: Ensure the latest iotop is installed
+  yum:
+    name: iotop
+    state: latest
+  tags: tools
+
+- name: Ensure the latest vnstat is installed
+  yum:
+    name: vnstat
+    state: latest
+  tags: tools
+
+- name: Ensure the latest nethogs is installed
+  yum:
+    name: nethogs
+    state: latest
+  tags: tools

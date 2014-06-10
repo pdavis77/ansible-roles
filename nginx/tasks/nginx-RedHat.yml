@@ -1,0 +1,11 @@
+---
+#
+# File: nginx/tasks/nginx-RedHat.yml
+#
+- name: Install nginx
+  yum:
+    name: nginx
+    state: latest
+    update_cache: true
+  notify:
+    - start nginx 

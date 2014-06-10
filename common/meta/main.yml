@@ -4,7 +4,7 @@
 #
 galaxy_info:
   author: Paul Davis
-  description: "Installs Nginx on Ubuntu or CentOS"
+  description: "Installs the latest update of Oracle JDK version(s) on Ubuntu or CentOS"
   company: PD
   license: MIT
   min_ansible_version: 1.6

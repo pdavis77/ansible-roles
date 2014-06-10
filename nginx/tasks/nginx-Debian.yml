@@ -1,0 +1,11 @@
+---
+#
+# File: nginx/tasks/nginx-Debian.yml
+#
+- name: Install nginx
+  apt:
+    name: nginx
+    state: latest
+    update_cache: true
+  notify:
+    - start nginx 
