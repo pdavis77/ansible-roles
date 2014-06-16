@@ -3,8 +3,12 @@
 # File: common/handlers/main.yml
 #
 
-- name: restart ntpd
-  service: name=ntpd state=restarted
+- name: start ntp
+  service: name={{ ntp_service_name }} state=started enabled=yes
+  sudo: yes
+  tags: ntp
 
-- name: restart nginx
-  service: name=nginx state=restarted
+- name: restart ntp
+  service: name={{ ntp_service_name }} state=restarted enabled=yes
+  sudo: yes
+  tags: ntp

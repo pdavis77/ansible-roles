@@ -1,10 +1,11 @@
 ---
 #
-# File: nginx/meta/main.yml
+# File: logstash/meta/main.yml
 #
+
 galaxy_info:
   author: Paul Davis
-  description: "Installs Nginx on Ubuntu or CentOS"
+  description: "Installs Logstash on Ubuntu or CentOS"
   company: PD
   license: MIT
   min_ansible_version: 1.6
@@ -18,7 +19,7 @@ galaxy_info:
     - 6
 
   categories:
-  - system
-  - webserver
+  - nosql
+  - database
 
 dependencies: []

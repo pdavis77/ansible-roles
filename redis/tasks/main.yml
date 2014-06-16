@@ -1,0 +1,88 @@
+---
+#
+# File: redis/tasks/main.yml
+#
+
+# OS specific tasks
+- include: "redis-Debian.yml"
+  when: ansible_os_family == 'Debian'
+  tags: redis
+
+- include: "redis-RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+  tags: redis
+
+- name: Redis | Add redis user
+  user: name={{ redis_user }} comment="Redis"
+  tags: redis
+
+- name: Redis | Download redis
+  get_url: url=http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
+           dest=/usr/local/src/redis-{{ redis_version }}.tar.gz
+  tags: redis
+
+- name: Redis | Extract redis tarball
+  shell: tar xf /usr/local/src/redis-{{ redis_version }}.tar.gz -C /usr/local/src
+         creates=/usr/local/src/redis-{{ redis_version }}
+  tags: redis
+
+- name: Redis | Compile redis
+  command: make -j5
+           chdir=/usr/local/src/redis-{{ redis_version }}
+           creates=/usr/local/src/redis-{{ redis_version }}/src/redis-server
+  tags: redis
+
+- name: Redis | Create redis install directory
+  file: path={{ redis_install_dir }} state=directory
+  tags: redis
+
+- name: Redis | Create /etc/redis
+  file: path=/etc/redis state=directory
+  tags: redis
+
+- name: Redis | Create /var/run/redis
+  file: path=/var/run/redis state=directory owner={{ redis_user }}
+  tags: redis
+
+- name: Redis | Install redis
+  command: make PREFIX={{ redis_install_dir }} install
+           chdir=/usr/local/src/redis-{{ redis_version }}
+           creates={{ redis_install_dir }}/bin/redis-server
+  tags: redis
+
+- name: Redis | Create redis working directory
+  file: path={{ redis_dir }} state=directory recurse=yes owner={{ redis_user }}
+  tags: redis
+
+- name: Redis | Create redis init script
+  template: src={{ item }} dest=/etc/init.d/redis mode=0755
+  # Choose the distro-specific template. We must specify the templates
+  # path here because with_first_found tries to find files in files/
+  with_first_found:
+    - files:
+      - "{{ ansible_os_family }}-redis.init.j2"
+      - default-redis.init.j2
+  tags: redis
+
+- name: Redis | Set redis to start at boot
+  service: name=redis_{{ redis_port }} enabled=yes
+  tags: redis
+
+- name: Redis | Ensure that log file exists and is writable by redis
+  file: path={{ redis_logfile }} owner={{ redis_user }} group={{ redis_user }} mode=0600 state=touch
+  when: redis_logfile != '""'
+  tags: redis
+
+- name: Redis | Create redis config file
+  template: src=redis.conf.j2 dest=/etc/redis/{{ redis_port }}.conf
+            owner={{ redis_user }}
+  notify: restart redis
+  tags: redis
+
+# Flush handlers before ensuring the service is started to prevent
+# a start and then restart
+- name: Redis | Flush handlers to apply config changes
+  meta: flush_handlers
+  notify:
+  	- start redis
+  tags: redis

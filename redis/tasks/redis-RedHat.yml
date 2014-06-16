@@ -1,0 +1,9 @@
+---
+#
+# File: redis/tasks/RedHat.yml
+#
+
+- name: Redis | Add redis init config file
+  template: dest=/etc/sysconfig/redis src=redis.init.conf.j2
+  when: ansible_os_family == "RedHat"
+  notify: restart redis

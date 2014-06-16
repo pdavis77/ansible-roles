@@ -1,0 +1,58 @@
+---
+# RedHat/CentOS Specific
+# file: tasks/RedHat.yml
+
+- name: Stop and disable iptables
+  service:
+    name: iptables
+    state: stopped
+    enabled: no
+
+- name: Install libselinux-python
+  yum:
+    name: libselinux-python
+    state: installed
+  tags: selinux
+
+- name: Set selinux to permissive
+  selinux:
+    policy: targeted
+    state: permissive
+  tags: selinux
+
+- name: Turn libselinux off
+  command: /usr/sbin/setenforce 0
+  tags: selinux
+
+- name: Add EPEL repo
+  copy: src=epel.repo.j2 dest=/etc/yum.repos.d/epel.repo
+  tags: epel
+
+- name: Create the GPG key for EPEL
+  copy: src=RPM-GPG-KEY-EPEL-6 dest=/etc/pki/rpm-gpg
+  tags: epel
+
+- name: Ensure ntp is installed
+  yum: 
+    name: ntp
+    state: latest
+  notify:
+    - restart ntp
+  tags: ntp
+
+- name: Sync with ntp
+  shell: "ntpdate -u {{ ntp_sync_server }}"
+  tags: ntp
+
+# Tools
+- name: Ensure the latest wget htop iotop vnstat nethogs is installed
+  yum: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - wget
+    - htop
+    - iotop
+    - vnstat
+    - nethogs
+  tags: tools

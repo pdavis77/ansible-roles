@@ -4,10 +4,19 @@
 #
 
 # Nginx config
-- include: "nginx-{{ os_family }}.yml"
 
+# OS specific tasks
+- include: "nginx-Debian.yml"
+  when: ansible_os_family == 'Debian'
+  tags: nginx
+
+- include: "nginx-RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+  tags: nginx
 
 - name: Upload nginx.conf
-  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/nginx.conf owner={{ user }}
+  sudo: yes
   notify:
     - restart nginx
+  tags: nginx

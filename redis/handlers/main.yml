@@ -1,0 +1,12 @@
+---
+#
+# File: logstash/handlers/main.yml
+#
+
+- name: Redis | Start redis
+  service: name=redis state=started
+  tags: redis
+
+- name: Redis | Restart redis
+  service: name=redis state=restarted
+  tags: redis

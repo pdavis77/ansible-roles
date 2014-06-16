@@ -4,14 +4,29 @@
 #
 
 #- name: OS specific variables
-#  include_vars: "{{ ansible_os_family }}.yml"
+#  include_vars: "{{ ansible_os_family }}.yml" is not as safe as below
+- include_vars: "Debian.yml"
+  when: ansible_os_family == 'Debian'
+  tags: vars
 
-# tools installation
-- include: "tools-{{ os_family }}.yml"
+- include_vars: "RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+  tags: vars
+
+# OS specific tasks
+- include: "common-Debian.yml"
+  when: ansible_os_family == 'Debian'
+
+- include: "common-RedHat.yml"
+  when: ansible_os_family == 'RedHat'
 
 # ntp config
-- include: "ntp-{{ os_family }}.yml"
+- include: "ntp.yml"
 
-# do the oracle_jdk work in a separate file
-- include: "oracle_jdk-{{ os_family }}.yml"
+# oracle_jdk tasks based on os_family
+- include: "oracle_jdk-Debian.yml"
+  when: ansible_os_family == 'Debian'
+
+- include: "oracle_jdk-RedHat.yml"
+  when: ansible_os_family == 'RedHat'
 

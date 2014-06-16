@@ -6,6 +6,6 @@
   yum:
     name: nginx
     state: latest
-    update_cache: true
   notify:
-    - start nginx 
+    - start nginx
+  tags: nginx

@@ -1,0 +1,10 @@
+---
+#
+# File: redis/tasks/Debian.yml
+#
+
+- name: Redis | Add redis init config file
+  template: dest=/etc/default/redis src=redis.init.conf.j2
+  when: ansible_os_family == "Debian"
+  notify: restart redis
+  tags: redis

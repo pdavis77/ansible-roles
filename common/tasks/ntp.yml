@@ -1,0 +1,15 @@
+---
+# NTP Config
+# file: tasks/ntp-RedHat.yml
+
+- name: Ensure ntp is configured
+  copy: src=ntp.conf.j2 dest=/etc/ntp.conf
+  sudo: yes
+  notify:
+    - "restart {{ ntp_service_name }}"
+  tags: ntp
+
+- name: Ensure ntp is running and enabled
+  service: name={{ ntp_service_name }} state=running enabled=yes
+  sudo: yes
+  tags: ntp

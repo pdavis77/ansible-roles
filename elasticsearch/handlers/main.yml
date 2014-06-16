@@ -1,0 +1,6 @@
+---
+#
+# File: redis/handlers/main.yml
+#
+- name: Elasticsearch | Restart Elasticsearch
+  service: name=elasticsearch state=restarted

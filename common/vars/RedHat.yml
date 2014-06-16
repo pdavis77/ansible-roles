@@ -1,0 +1,15 @@
+---
+# RedHat/CentOS specific vars
+# common/vars/RedHat.yml
+#
+
+# Oracle JDK - RPM Install
+#http://download.oracle.com/otn-pub/java/jdk/7u55-b13/jdk-7u55-linux-x64.rpm
+#http://download.oracle.com/otn-pub/java/jdk/7u60-b19/jdk-7u60-linux-x64.rpm
+java_version: '7u60'
+java_build: 'b19'
+
+jdk_file_name: "jdk-{{ java_version }}-linux-x{{ ansible_userspace_bits }}.rpm"
+jdk_file_path: "/tmp/{{ jdk_file_name }}"
+
+ntp_service_name: ntpd

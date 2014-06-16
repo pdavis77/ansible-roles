@@ -1,0 +1,32 @@
+---
+# Debian/Ubuntu specific
+# file: tasks/Debian.yml
+
+- name: Install python-software-properties
+  apt: pkg=python-software-properties state=present update_cache=yes
+
+#- name: Ensure ntp is installed
+- apt:
+    name: ntp
+    state: present
+  sudo: yes
+  notify:
+    - start ntp
+  tags: ntp
+
+- name: Sync with ntp
+  shell: "ntpdate -u {{ ntp_sync_server }}"
+  sudo: yes
+  tags: ntp
+
+- name: Ensure the latest htop iotop vnstat nethogs is installed
+  apt: 
+    name: "{{ item }}"
+    state: latest
+  sudo: yes
+  with_items:
+    - htop
+    - iotop
+    - vnstat
+    - nethogs
+  tags: tools
