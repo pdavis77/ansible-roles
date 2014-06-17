@@ -11,11 +11,11 @@
     state: present
   sudo: yes
   notify:
-    - start ntp
+    - restart ntp
   tags: ntp
 
 - name: Sync with ntp
-  shell: "ntpdate -u {{ ntp_sync_server }}"
+  shell: "ntpdate -u {{ ntp_servers | random }}"
   sudo: yes
   tags: ntp
 

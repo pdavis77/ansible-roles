@@ -4,11 +4,11 @@
 #
 
 - name: start ntp
-  service: name={{ ntp_service_name }} state=started enabled=yes
+  service: "name={{ ntp_service_name }} state=started enabled=yes"
   sudo: yes
   tags: ntp
 
 - name: restart ntp
-  service: name={{ ntp_service_name }} state=restarted enabled=yes
+  service: "name={{ ntp_service_name }} state=restarted enabled=yes"
   sudo: yes
   tags: ntp

@@ -21,11 +21,12 @@
   tags: selinux
 
 - name: Turn libselinux off
-  command: /usr/sbin/setenforce 0
+  selinux:
+    state: disabled
   tags: selinux
 
 - name: Add EPEL repo
-  copy: src=epel.repo.j2 dest=/etc/yum.repos.d/epel.repo
+  template: src=epel.repo.j2 dest=/etc/yum.repos.d/epel.repo
   tags: epel
 
 - name: Create the GPG key for EPEL
@@ -41,7 +42,7 @@
   tags: ntp
 
 - name: Sync with ntp
-  shell: "ntpdate -u {{ ntp_sync_server }}"
+  shell: "ntpdate -u {{ ntp_servers | random }}"
   tags: ntp
 
 # Tools
