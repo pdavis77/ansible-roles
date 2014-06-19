@@ -1,37 +1,47 @@
 ---
 #
-# File: redis/meta/main.yml
+# File: elasticsearch/vars/main.yml
 #
-elasticsearch_cluster_name: es-cluster
 
-elasticsearch_version: 1.2.0
-elasticsearch_user: elasticsearch
-elasticsearch_group: elasticsearch
-elasticsearch_download_url: https://download.elasticsearch.org/elasticsearch/elasticsearch
-elasticsearch_max_open_files: 65535
-elasticsearch_home_dir: /usr/share/elasticsearch
-elasticsearch_plugin_dir: /usr/share/elasticsearch/plugins
-elasticsearch_log_dir: /var/log/elasticsearch
-elasticsearch_data_dir: /var/lib/elasticsearch
-elasticsearch_work_dir: /tmp/elasticsearch
-elasticsearch_conf_dir: /etc/elasticsearch
 
-elasticsearch_heap_size: {{ ansible_memtotal_mb }}/0.5
-elasticsearch_max_open_files: 65535
-elasticsearch_max_locked_memory: unlimited
-elasticsearch_timezone: "America/New_York"
-elasticsearch_node_name: {{ ansible_hostname }}
-elasticsearch_node_max_local_storage_nodes: 1
-elasticsearch_index_mapper_dynamic: "true"
-elasticsearch_memory_bootstrap_mlockall: "true"
-elasticsearch_gateway_type: local
-elasticsearch_gateway_recover_after_nodes: 1
-elasticsearch_gateway_recover_after_time: 2m
-elasticsearch_gateway_expected_nodes: 1
-elasticsearch_discovery_zen_minimum_master_nodes: 1
-elasticsearch_discovery_zen_ping_timeout: 30s
-elasticsearch_discovery_zen_ping_multicast_enabled: "true"
-elasticsearch_misc_auto_create_index: "true"
-elasticsearch_misc_query_bool_max_clause_count: 4096
-elasticsearch_misc_disable_delete_all_indices: "true"
-elasticsearch_java_opts: "-XX:-UseSuperWord"
+es_cluster_name: es-cluster
+es_node_name: "{{ ansible_hostname }}"
+es_node_rack: dc1
+es_master_host_grp: es-master
+es_master_data_host_grp: es-master-data
+es_search_host_grp: es-search
+es_data_host_grp: es-data
+
+es_version: 1.2.1
+es_dl_file_name: "elasticsearch-{{ es_version }}"
+es_user: elasticsearch
+es_group: elasticsearch
+es_download_url: https://download.elasticsearch.org/elasticsearch/elasticsearch
+es_max_open_files: 65535
+es_home_dir: /usr/share/elasticsearch
+es_plugin_dir: /usr/share/elasticsearch/plugins
+es_log_dir: /var/log/elasticsearch
+es_data_dir: /var/lib/elasticsearch
+es_work_dir: /tmp/elasticsearch
+es_conf_dir: /etc/elasticsearch
+
+
+es_index_number_of_shards: 3
+es_index_number_of_replicas: 1
+es_max_open_files: 65535
+es_max_locked_memory: unlimited
+es_timezone: "UTC"
+es_node_max_local_storage_nodes: 1
+es_index_mapper_dynamic: "true"
+es_memory_bootstrap_mlockall: "true"
+es_gateway_type: local
+es_gateway_recover_after_nodes: 1
+es_gateway_recover_after_time: 2m
+es_gateway_expected_nodes: 3
+es_discovery_zen_minimum_master_nodes: 1
+es_discovery_zen_ping_timeout: 30s
+es_discovery_zen_ping_multicast_enabled: "true"
+es_misc_auto_create_index: "true"
+es_misc_query_bool_max_clause_count: 4096
+es_misc_disable_delete_all_indices: "true"
+

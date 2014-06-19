@@ -3,69 +3,49 @@
 # File: redis/tasks/main.yml
 #
 
-# Configure timezone
-- name: Elasticsearch | Configuring timezone
-  shell: echo {{ elasticsearch_timezone }} > /etc/timezone; dpkg-reconfigure --frontend noninteractive tzdata
+#- name: OS specific variables
+#  include_vars: "{{ ansible_os_family }}.yml" is not as safe as below
+- include_vars: "Debian.yml"
+  when: ansible_os_family == 'Debian'
+  tags: vars
+
+- include_vars: "RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+  tags: vars
+
 
 # Configure user and group
 - name: Elasticsearch | Configuring user and group
-  group: name={{ elasticsearch_group }}
-- user: name={{ elasticsearch_user }} group={{ elasticsearch_group }} createhome=no
+  group: "name={{ es_group }}"
+  tags: elasticsearch
+- user: "name={{ es_user }} group={{ es_group }} createhome=no"
+  tags: elasticsearch
 
 # Check whether we have aleady installed the same version
-- shell: if [ -e /usr/share/elasticsearch/lib/elasticsearch-{{ elasticsearch_version }}.jar ]; then echo yes; else echo no; fi;
+- shell: "if [ -e /usr/share/elasticsearch/lib/elasticsearch-{{ es_version }}.jar ]; then echo yes; else echo no; fi;"
   register: version_exists
   always_run: True
+  tags: elasticsearch
 
-# Download deb if needed
-- name: Elasticsearch | Download Elasticsearch deb
-  get_url: url={{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}.deb dest=/tmp/elasticsearch-{{ elasticsearch_version }}.deb mode=0440
+# Download install file if needed
+- name: Elasticsearch | Download Elasticsearch
+  get_url: "url={{ es_download_url }}/{{ es_dl_file_name }}.{{ es_dl_file_ext }} dest=/tmp/{{ es_dl_file_name }}.{{ es_dl_file_ext }} mode=0440"
   when: version_exists.stdout == 'no'
+  tags: elasticsearch
 
-# Uninstall previous version if applicable
-- name: Elasticsearch | Uninstalling previous version if applicable
-  shell: dpkg --remove elasticsearch
-  when: version_exists.stdout == 'no'
-- file: path=/usr/share/elasticsearch state=absent
-  when: version_exists.stdout == 'no'
+- include_vars: "es-Debian.yml"
+  when: ansible_os_family == 'Debian'
+  tags: elasticsearch
 
-# Install the deb
-- name: Elasticsearch | Install Elasticsearch deb
-  shell: dpkg -i -E --force-confnew /tmp/elasticsearch-{{ elasticsearch_version }}.deb
-  when: version_exists.stdout == 'no'
-- file: path=/usr/share/elasticsearch state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
-
-# Configure directories
-- name: Elasticsearch | Configuring directories
-  file: path={{ elasticsearch_log_dir }} state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
-  when: elasticsearch_log_dir is defined
-- file: path={{ elasticsearch_data_dir }} state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
-  when: elasticsearch_data_dir is defined
-- file: path={{ elasticsearch_work_dir }} state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
-  when: elasticsearch_work_dir is defined
-- file: path={{ elasticsearch_conf_dir }} state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
-  when: elasticsearch_conf_dir is defined
-- file: path={{ elasticsearch_plugin_dir }} state=absent
-  when: elasticsearch_plugin_dir is defined
-- file: path={{ elasticsearch_plugin_dir }} state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
-  when: elasticsearch_plugin_dir is defined
-
-# Configure open file limits
-- name: Elasticsearch | Configuring open file limits
-  shell: "echo Configuring open file limits"
-- lineinfile: dest=/etc/security/limits.conf regexp='^{{ elasticsearch_user }}     -    nofile    {{ elasticsearch_max_open_files }}' insertafter=EOF line='{{ elasticsearch_user }}     -    nofile    {{ elasticsearch_max_open_files }}'
-  when: elasticsearch_max_open_files is defined
-- lineinfile: dest=/etc/security/limits.conf regexp='^{{ elasticsearch_user }}     -    memlock   {{ elasticsearch_max_locked_memory }}' insertafter=EOF line='{{ elasticsearch_user }}     -    memlock   {{ elasticsearch_max_locked_memory }}'
-  when: elasticsearch_max_locked_memory is defined
-- lineinfile: dest=/etc/pam.d/su regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'
-- lineinfile: dest=/etc/pam.d/common-session regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'
-- lineinfile: dest=/etc/pam.d/common-session-noninteractive regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'
-- lineinfile: dest=/etc/pam.d/sudo regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'
-- lineinfile: dest=/etc/init.d/elasticsearch regexp='^(DAEMON_OPTS=".*-Des.max-open-files=true")$' insertafter='^(DAEMON_OPTS=".*CONF_DIR")$' line='DAEMON_OPTS="$DAEMON_OPTS -Des.max-open-files=true"'
+- include_vars: "es-RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+  tags: elasticsearch
 
 # Configure Elasticsearch Node
 - name: Elasticsearch | Configuring Elasticsearch Node
-  template: src=elasticsearch.yml.j2 dest={{ elasticsearch_conf_dir }}/elasticsearch.yml owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
-  when: elasticsearch_conf_dir is defined
-- template: src=elasticsearch.default.j2 dest=/etc/default/elasticsearch owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
+  template: "src=elasticsearch.yml.j2 dest={{ es_conf_dir }}/elasticsearch.yml owner={{ es_user }} group={{ es_group }} mode=0644"
+  when: es_conf_dir is defined
+  tags: elasticsearch
+- template: "src=elasticsearch.defaults.j2 dest=/etc/{{ es_defaults_dir }}/elasticsearch owner={{ es_user }} group={{ es_group }} mode=0644"
+  tags: elasticsearch
 

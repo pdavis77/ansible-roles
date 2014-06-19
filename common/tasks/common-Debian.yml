@@ -1,11 +1,15 @@
 ---
 # Debian/Ubuntu specific
-# file: tasks/Debian.yml
+# file: common/tasks/Debian.yml
 
 - name: Install python-software-properties
   apt: pkg=python-software-properties state=present update_cache=yes
 
-#- name: Ensure ntp is installed
+# Configure ntp + timezone
+- name: Configuring timezone
+  shell: "echo {{ host_timezone }} > /etc/timezone; dpkg-reconfigure --frontend noninteractive tzdata"
+  tags: ntp
+
 - apt:
     name: ntp
     state: present
@@ -19,6 +23,7 @@
   sudo: yes
   tags: ntp
 
+# Install tools
 - name: Ensure the latest htop iotop vnstat nethogs is installed
   apt: 
     name: "{{ item }}"

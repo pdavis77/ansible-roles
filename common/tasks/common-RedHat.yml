@@ -33,6 +33,11 @@
   copy: src=RPM-GPG-KEY-EPEL-6 dest=/etc/pki/rpm-gpg
   tags: epel
 
+# Configure ntp + timezone
+- name: Configuring timezone
+  shell: "cp /usr/share/zoneinfo/{{ host_timezone }} /etc/localtime"
+  tags: ntp
+
 - name: Ensure ntp is installed
   yum: 
     name: ntp
@@ -45,7 +50,7 @@
   shell: "ntpdate -u {{ ntp_servers | random }}"
   tags: ntp
 
-# Tools
+# Install Tools
 - name: Ensure the latest wget htop iotop vnstat nethogs is installed
   yum: 
     name: "{{ item }}"
