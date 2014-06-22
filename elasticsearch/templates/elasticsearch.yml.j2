@@ -1,0 +1,314 @@
+# ElasticSearch Configuration
+# Managed by Ansible - Do Not Edit -
+# # #
+
+################################### Cluster ###################################
+
+{% if es_cluster_name is defined %}
+cluster.name: {{ es_cluster_name }}
+{% endif %}
+
+#################################### Node #####################################
+
+{% if es_node_name is defined %}
+node.name: {{ es_node_name }}
+{% endif %}
+
+{% if es_search_host_grp in group_names %}
+node.master: false
+node.data: false
+{% endif %}
+
+{% if es_master_host_grp in group_names %}
+node.master: true
+node.data: false
+{% endif %}
+
+{% if es_master_data_host_grp in group_names %}
+node.master: true
+node.data: true
+{% endif %}
+
+{% if es_data_host_grp in group_names %}
+node.master: false
+node.data: true
+{% endif %}
+
+{% if es_node_rack is defined %}
+node.rack: {{ es_node_rack }}
+{% endif %}
+
+{% if es_node_max_local_storage_nodes is defined %}
+node.max_local_storage_nodes: {{ es_node_max_local_storage_nodes }}
+{% endif %}
+
+#################################### Index ####################################
+
+{% if es_index_number_of_shards is defined %}
+index.number_of_shards: {{ es_index_number_of_shards }}
+{% endif %}
+
+{% if es_index_number_of_replicas is defined %}
+index.number_of_replicas: {{ es_number_of_replicas }}
+{% endif %}
+
+{% if es_index_mapper_dynamic is defined %}
+index.mapper_dynamic: {{ es_index_mapper_dynamic }}
+{% endif %}
+
+{% if es_misc_query_bool_max_clause_count is defined %}
+index.query.bool.max_clause_count: {{ es_misc_query_bool_max_clause_count }}
+{% endif %}
+
+#################################### Paths ####################################
+
+{% if es_conf_dir is defined %}
+path.conf: {{ es_conf_dir }}
+{% endif %}
+
+{% if es_data_dir is defined %}
+path.data: {{ es_data_dir }}
+{% endif %}
+
+# Can optionally include more than one location, causing data to be striped across
+# the locations (a la RAID 0) on a file level, favouring locations with most free
+# space on creation. For example:
+#
+# path.data: /path/to/data1,/path/to/data2
+
+{% if es_work_dir is defined %}
+path.work: {{ es_work_dir }}
+{% endif %}
+
+{% if es_log_dir is defined %}
+path.logs: {{ es_log_dir }}
+{% endif %}
+
+{% if es_plugin_dir is defined %}
+path.plugins: {{ es_plugin_dir }}
+{% endif %}
+
+#################################### Plugin ###################################
+
+#
+# plugin.mandatory: mapper-attachments,lang-groovy
+
+
+################################### Memory ####################################
+
+{% if es_memory_bootstrap_mlockall is defined %}
+bootstrap.mlockall: {{ es_memory_bootstrap_mlockall }}
+{% endif %}
+
+
+############################## Network And HTTP ###############################
+
+{% if es_network_bind_host is defined %}
+network.bind_host: {{ es_network_bind_host }}
+{% endif %}
+
+{% if es_network_publish_host is defined %}
+network.publish_host: {{ es_network_publish_host }}
+{% endif %}
+
+{% if es_network_host is defined %}
+network.host: {{ es_network_host }}
+{% endif %}
+
+{% if es_network_transport_tcp_port is defined %}
+transport.tcp.port: {{ es_network_transport_tcp_port }}
+{% endif %}
+
+{% if es_network_transport_tcp_compress is defined %}
+transport.tcp.compress: {{ es_network_transport_tcp_compress }}
+{% endif %}
+
+{% if es_network_http_port is defined %}
+http.port: {{ es_network_http_port }}
+{% endif %}
+
+{% if es_network_http_max_content_lengtht is defined %}
+http.max_content_length: {{ es_network_http_max_content_lengtht }}
+{% endif %}
+
+{% if es_data_host_grp in group_names %}
+http.enabled: false
+{% endif %}
+
+################################### Gateway ###################################
+
+{% if es_gateway_type is defined %}
+gateway.type: {{ es_gateway_type }}
+{% endif %}
+
+{% if es_gateway_recover_after_nodes is defined %}
+gateway.recover_after_nodes: {{ es_gateway_recover_after_nodes }}
+{% endif %}
+
+{% if es_gateway_recover_after_time is defined %}
+gateway.recover_after_time: {{ es_gateway_recover_after_time }}
+{% endif %}
+
+{% if es_gateway_expected_nodes is defined %}
+gateway.expected_nodes: {{ es_gateway_expected_nodes }}
+{% endif %}
+
+############################# Recovery Throttling #############################
+
+{% if es_recovery_node_initial_primaries_recoveries is defined %}
+cluster.routing.allocation.node_initial_primaries_recoveries: {{ es_recovery_node_initial_primaries_recoveries }}
+{% endif %}
+
+{% if es_recovery_node_concurrent_recoveries is defined %}
+cluster.routing.allocation.node_concurrent_recoveries: {{ es_recovery_node_concurrent_recoveries }}
+{% endif %}
+
+{% if es_recovery_max_size_per_sec is defined %}
+indices.recovery.max_size_per_sec: {{ es_recovery_max_size_per_sec }}
+{% endif %}
+
+{% if es_recovery_concurrent_streams is defined %}
+indices.recovery.concurrent_streams: {{ es_recovery_concurrent_streams }}
+{% endif %}
+
+
+################################## Discovery ##################################
+
+{% if es_discovery_zen_minimum_master_nodes is defined %}
+discovery.zen.minimum_master_nodes: {{ es_discovery_zen_minimum_master_nodes }}
+{% endif %}
+
+{% if es_discovery_zen_ping_timeout is defined %}
+discovery.zen.ping.timeout: {{ es_discovery_zen_ping_timeout }}
+{% endif %}
+
+{% if es_discovery_zen_ping_multicast_enabled is defined %}
+discovery.zen.ping.multicast.enabled: {{ es_discovery_zen_ping_multicast_enabled }}
+{% endif %}
+
+{% if es_discovery_zen_ping_unicast_hosts is defined %}
+discovery.zen.ping.unicast.hosts: {{ es_discovery_zen_ping_unicast_hosts }}
+{% endif %}
+
+{% if es_discovery_zen_fd_ping_interval is defined %}
+discovery.zen.fd.ping_interval: {{ es_discovery_zen_fd_ping_interval }}
+{% endif %}
+
+{% if es_discovery_zen_fd_ping_timeout is defined %}
+discovery.zen.fd.ping_timeout: {{ es_discovery_zen_fd_ping_timeout }}
+{% endif %}
+
+{% if es_discovery_zen_fd_ping_retries is defined %}
+discovery.zen.fd.ping_retries: {{ es_discovery_zen_fd_ping_retries }}
+{% endif %}
+
+
+################################## Slow Log ##################################
+
+#index.search.slowlog.threshold.query.warn: 10s
+{% if es_slowlog_threshold_query_warn is defined %}
+index.search.slowlog.threshold.query.warn: {{ es_slowlog_threshold_query_warn }}
+{% endif %}
+
+#index.search.slowlog.threshold.query.info: 5s
+{% if es_slowlog_threshold_query_info is defined %}
+index.search.slowlog.threshold.query.info: {{ es_slowlog_threshold_query_info }}
+{% endif %}
+
+#index.search.slowlog.threshold.query.debug: 2s
+{% if es_slowlog_threshold_query_debug is defined %}
+index.search.slowlog.threshold.query.debug: {{ es_slowlog_threshold_query_debug }}
+{% endif %}
+
+#index.search.slowlog.threshold.query.trace: 500ms
+{% if es_slowlog_threshold_query_trace is defined %}
+index.search.slowlog.threshold.query.trace: {{ es_slowlog_threshold_query_trace }}
+{% endif %}
+
+#index.search.slowlog.threshold.fetch.warn: 1s
+{% if es_slowlog_threshold_fetch_warn is defined %}
+index.search.slowlog.threshold.fetch.warn: {{ es_slowlog_threshold_fetch_warn }}
+{% endif %}
+
+#index.search.slowlog.threshold.fetch.info: 800ms
+{% if es_slowlog_threshold_fetch_info is defined %}
+index.search.slowlog.threshold.fetch.info: {{ es_slowlog_threshold_fetch_info }}
+{% endif %}
+
+#index.search.slowlog.threshold.fetch.debug: 500ms
+{% if es_slowlog_threshold_fetch_debug is defined %}
+index.search.slowlog.threshold.fetch.debug: {{ es_slowlog_threshold_fetch_debug }}
+{% endif %}
+
+#index.search.slowlog.threshold.fetch.trace: 200ms
+{% if es_slowlog_threshold_fetch_trace is defined %}
+index.search.slowlog.threshold.fetch.trace: {{ es_slowlog_threshold_fetch_trace }}
+{% endif %}
+
+#index.indexing.slowlog.threshold.index.warn: 10s
+{% if es_slowlog_threshold_index_warn is defined %}
+index.indexing.slowlog.threshold.index.warn: {{ es_slowlog_threshold_index_warn }}
+{% endif %}
+
+#index.indexing.slowlog.threshold.index.info: 5s
+{% if es_slowlog_threshold_index_info is defined %}
+index.indexing.slowlog.threshold.index.info: {{ es_slowlog_threshold_index_info }}
+{% endif %}
+
+#index.indexing.slowlog.threshold.index.debug: 2s
+{% if es_slowlog_threshold_index_debug is defined %}
+index.indexing.slowlog.threshold.index.debug: {{ es_slowlog_threshold_index_debug }}
+{% endif %}
+
+#index.indexing.slowlog.threshold.index.trace: 500ms
+{% if es_slowlog_threshold_index_trace is defined %}
+index.indexing.slowlog.threshold.index.trace: {{ es_slowlog_threshold_index_trace }}
+{% endif %}
+
+################################## GC Logging ################################
+
+#monitor.jvm.gc.ParNew.warn: 1000ms
+{% if es_gc_par_new_warn is defined %}
+monitor.jvm.gc.ParNew.warn: {{ es_gc_par_new_warn }}
+{% endif %}
+
+#monitor.jvm.gc.ParNew.info: 700ms
+{% if es_gc_par_new_info is defined %}
+monitor.jvm.gc.ParNew.info: {{ es_gc_par_new_info }}
+{% endif %}
+
+#monitor.jvm.gc.ParNew.debug: 400ms
+{% if es_gc_par_new_debug is defined %}
+monitor.jvm.gc.ParNew.debug: {{ es_gc_par_new_debug }}
+{% endif %}
+
+#monitor.jvm.gc.ConcurrentMarkSweep.warn: 10s
+{% if es_gc_soncurrent_mark_sweep_warn is defined %}
+monitor.jvm.gc.ConcurrentMarkSweep.warn: {{ es_gc_soncurrent_mark_sweep_warn }}
+{% endif %}
+
+#monitor.jvm.gc.ConcurrentMarkSweep.info: 5s
+{% if es_gc_soncurrent_mark_sweep_info is defined %}
+monitor.jvm.gc.ConcurrentMarkSweep.info: {{ es_gc_soncurrent_mark_sweep_info }}
+{% endif %}
+
+#monitor.jvm.gc.ConcurrentMarkSweep.debug: 2s
+{% if es_gc_soncurrent_mark_sweep_debug is defined %}
+monitor.jvm.gc.ConcurrentMarkSweep.debug: {{ es_gc_soncurrent_mark_sweep_debug }}
+{% endif %}
+
+################################### Varia #####################################
+
+{% if es_misc_auto_create_index is defined %}
+action.auto_create_index: {{ es_misc_auto_create_index }}
+{% endif %}
+
+{% if es_misc_disable_delete_all_indices is defined %}
+action.disable_delete_all_indices: {{ es_misc_disable_delete_all_indices }}
+{% endif %}
+
+{% if es_thread_pools is defined %}
+{% for threadPoolSetting in es_thread_pools %}
+{{ threadPoolSetting }}
+{% endfor %}
+{% endif %}

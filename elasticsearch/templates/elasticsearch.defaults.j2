@@ -1,0 +1,58 @@
+# Elasticsearch defaults config
+# Managed by Ansible - Do Not Edit -
+# # #
+
+{% if es_user is defined %}
+ES_USER={{ es_user }}
+{% endif %}
+
+{% if es_group is defined %}
+ES_GROUP={{ es_group }}
+{% endif %}
+
+{% if es_heap_size is defined %}
+ES_HEAP_SIZE={{ ansible_memtotal_mb / 2 }}m
+{% endif %}
+
+# Heap new generation
+#ES_HEAP_NEWSIZE=
+
+# max direct memory
+#ES_DIRECT_SIZE=
+
+#MAX_OPEN_FILES=65535
+{% if es_max_open_files is defined %}
+MAX_OPEN_FILES={{ es_max_open_files }}
+{% endif %}
+
+#MAX_LOCKED_MEMORY=unlimited
+{% if es_max_locked_memory is defined %}
+MAX_LOCKED_MEMORY={{ es_max_locked_memory }}
+{% endif %}
+
+# ElasticSearch log directory
+#LOG_DIR=/var/log/elasticsearch
+
+# ElasticSearch data directory
+#DATA_DIR=/var/lib/elasticsearch
+
+# ElasticSearch work directory
+#WORK_DIR=/tmp/elasticsearch
+
+# ElasticSearch configuration directory
+#CONF_DIR=/etc/elasticsearch
+
+# ElasticSearch configuration file (elasticsearch.yml)
+#CONF_FILE=/etc/elasticsearch/elasticsearch.yml
+
+# Additional Java OPTS
+{% if es_java_opts is defined %}
+ES_JAVA_OPTS="{{ es_java_opts }}"
+{% else %}
+#ES_JAVA_OPTS=
+{% endif %}
+
+# Environment Vars
+{% if es_env_use_gc_logging is defined %}
+export ES_USE_GC_LOGGING=true
+{% endif %}
