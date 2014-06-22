@@ -1,4 +1,7 @@
 ---
 #
-# File: redis/handlers/main.yml
+# File: logstash/handlers/main.yml
 #
+
+- name: logstash | Restart logstash
+  service: name=logstash state=restarted

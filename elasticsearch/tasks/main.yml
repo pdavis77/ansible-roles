@@ -1,6 +1,6 @@
 ---
 #
-# File: redis/tasks/main.yml
+# File: elasticsearch/tasks/main.yml
 #
 
 #- name: OS specific variables
