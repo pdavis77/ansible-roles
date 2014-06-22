@@ -1,0 +1,7 @@
+---
+#
+# File: elasticsearch/vars/Debian.yml
+#
+
+es_dl_file_ext: deb
+es_defaults_dir: default

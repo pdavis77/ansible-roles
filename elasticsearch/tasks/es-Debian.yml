@@ -1,0 +1,61 @@
+#
+# File: elasticsearch/tasks/es-Debian.yml
+# 
+
+# Uninstall previous version if applicable
+- name: Elasticsearch | Uninstalling previous version if applicable
+  shell: dpkg --remove elasticsearch
+  when: version_exists.stdout == 'no'
+  tags: elasticsearch
+- file: path=/usr/share/elasticsearch state=absent
+  when: version_exists.stdout == 'no'
+  tags: elasticsearch
+
+- name: Elasticsearch | Install Elasticsearch deb
+  shell: "dpkg -i -E --force-confnew /tmp/{{ es_dl_file_name }}.{{ es_dl_file_ext }}"
+  when: version_exists.stdout == 'no'
+  tags: elasticsearch
+- file: "path=/usr/share/elasticsearch state=directory owner={{ es_user }} group={{ es_group }} recurse=yes"
+  tags: elasticsearch
+
+# Configure directories
+- name: Elasticsearch | Configuring directories
+  file: "path={{ es_log_dir }} state=directory owner={{ es_user }} group={{ es_group }} recurse=yes"
+  when: es_log_dir is defined
+  tags: elasticsearch
+- file: "path={{ es_data_dir }} state=directory owner={{ es_user }} group={{ es_group }} recurse=yes"
+  when: es_data_dir is defined
+  tags: elasticsearch
+- file: "path={{ es_work_dir }} state=directory owner={{ es_user }} group={{ es_group }} recurse=yes"
+  when: es_work_dir is defined
+  tags: elasticsearch
+- file: "path={{ es_conf_dir }} state=directory owner={{ es_user }} group={{ es_group }} recurse=yes"
+  when: es_conf_dir is defined
+  tags: elasticsearch
+- file: "path={{ es_plugin_dir }} state=absent"
+  when: es_plugin_dir is defined
+  tags: elasticsearch
+- file: "path={{ es_plugin_dir }} state=directory owner={{ es_user }} group={{ es_group }} recurse=yes"
+  when: es_plugin_dir is defined
+  tags: elasticsearch
+
+# Configure open file limits
+- name: Elasticsearch | Configuring open file limits
+  shell: "echo Configuring open file limits"
+  tags: elasticsearch
+- lineinfile: "dest=/etc/security/limits.conf regexp='^{{ es_user }}     -    nofile    {{ es_max_open_files }}' insertafter=EOF line='{{ es_user }}     -    nofile    {{ es_max_open_files }}'"
+  when: es_max_open_files is defined
+  tags: elasticsearch
+- lineinfile: "dest=/etc/security/limits.conf regexp='^{{ es_user }}     -    memlock   {{ es_max_locked_memory }}' insertafter=EOF line='{{ es_user }}     -    memlock   {{ es_max_locked_memory }}'"
+  when: es_max_locked_memory is defined
+  tags: elasticsearch
+- lineinfile: "dest=/etc/pam.d/su regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'"
+  tags: elasticsearch
+- lineinfile: "dest=/etc/pam.d/common-session regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'"
+  tags: elasticsearch
+- lineinfile: "dest=/etc/pam.d/common-session-noninteractive regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'"
+  tags: elasticsearch
+- lineinfile: "dest=/etc/pam.d/sudo regexp='^session    required   pam_limits.so' insertafter=EOF line='session    required   pam_limits.so'"
+  tags: elasticsearch
+- lineinfile: "dest=/etc/init.d/elasticsearch regexp='^(DAEMON_OPTS=".*-Des.max-open-files=true")$' insertafter='^(DAEMON_OPTS=".*CONF_DIR")$' line='DAEMON_OPTS="$DAEMON_OPTS -Des.max-open-files=true"'"
+  tags: elasticsearch

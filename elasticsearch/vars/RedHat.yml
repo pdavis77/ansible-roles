@@ -1,0 +1,8 @@
+---
+#
+# File: elasticsearch/vars/RedHat.yml
+#
+
+
+es_dl_file_ext: rpm
+es_defaults_dir: sysconfig
